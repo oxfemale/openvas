@@ -1,0 +1,458 @@
+
+ gvmd --create-scanner="OSP Scanner" --scanner-host=127.0.0.1 --scanner-port=1234 \
+      --scanner-type="OSP" --scanner-ca-pub=/opt/gvm/var/lib/gvm/CA/cacert.pem \
+      --scanner-key-pub=/opt/gvm/var/lib/gvm/CA/clientcert.pem \
+      --scanner-key-priv=/opt/gvm/var/lib/gvm/private/CA/clientkey.pem 
+gvmd --create-scanner="OSP Scanner" --scanner-type="OSP" --scanner-host=/var/run/ospd-scanner.sock
+gvmd --get-scanners
+gvmd --delete-scanner=
+gvmd --verify-scanner=
+
+/etc/systemd/system/
+
+8b69003-5fc2-4037-a479-93b440211c73  OpenVAS  /opt/gvm/var/run/ospd.sock  0  OpenVAS Default
+19b9e42e-1fbd-4eee-adc8-dc8712cda491  OSP  127.0.0.1  1234  OSP Scanner
+gvm@ubuntu:~$ gvmd --delete-scanner=19b9e42e-1fbd-4eee-adc8-dc8712cda491
+Scanner deleted.
+gvm@ubuntu:~$ gvmd --create-scanner="OSP Scanner" --scanner-type="OSP" --scanner-host=/var/run/ospd-scanner.sock
+Scanner created.
+gvm@ubuntu:~$ gvmd --get-scanners
+6acd0832-df90-11e4-b9d5-28d24461215b  CVE    0  CVE
+1b6abe05-2892-46ae-b743-3a2fea954b1c  OSP  /var/run/ospd-scanner.sock  9390  OSP Scanner
+08b69003-5fc2-4037-a479-93b440211c73  OpenVAS  /opt/gvm/var/run/ospd.sock  0  OpenVAS Default
+gvm@ubuntu:~$ gvmd --verify-scanner=1b6abe05-2892-46ae-b743-3a2fea954b1c
+Failed to verify scanner.
+gvm@ubuntu:~$ gvmd --verify-scanner=08b69003-5fc2-4037-a479-93b440211c73
+Failed to verify scanner.
+gvm@ubuntu:~$ gvmd --verify-scanner=6acd0832-df90-11e4-b9d5-28d24461215b
+Scanner version: GVM/20.08.0.
+gvm@ubuntu:~$ ls -al /opt/gvm/var/run/ospd.sock
+ls: cannot access '/opt/gvm/var/run/ospd.sock': No such file or directory
+gvm@ubuntu:~$ ls -a /var/run/ospd-scanner.sock
+ls: cannot access '/var/run/ospd-scanner.sock': No such file or directory
+gvm@ubuntu:~$
+
+/usr/bin/python3 /opt/gvm/bin/ospd-openvas --pid-file /opt/gvm/var/run/ospd-openvas.pid --log-file /opt/gvm/var/log/gvm/ospd-openvas.log --lock-file-dir /opt/gvm/var/run -u /opt/gvm/var/run/ospd.sock
+
+
+gvmd --get-scanners
+https://raw.githubusercontent.com/yu210148/gvm_install/master/install_gvm.sh
+
+sudo -Hiu gvm gvmd --create-scanner="Kifarunix-demo OpenVAS Scanner" --scanner-type="OpenVAS" --scanner-host=/opt/gvm/var/run/ospd.sock
+PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin/opt:/opt/gvm/bin:/opt/gvm/sbin:/opt/gvm/lib/python3.8/site-packages:/opt/gvm/lib/pkgconfig:/opt/gvm/.local/bin:/opt/gvm/.local/sbin"
+PYTHONPATH="/opt/gvm/lib/python3.8/site-packages"
+PKG_CONFIG_PATH="/opt/gvm/lib/pkgconfig"
+
+systemctl daemon-reload
+
+export PKG_CONFIG_PATH=/opt/gvm/lib/pkgconfig:$PKG_CONFIG_PATH
+export PYTHONPATH=/opt/gvm/lib/python3.8/site-packages
+
+cmake .. -DCMAKE_INSTALL_PREFIX=/opt/gvm
+python3 setup.py install --prefix=/opt/gvm
+
+/usr/bin/python3 /opt/gvm/bin/ospd-openvas \
+--pid-file /opt/gvm/var/run/ospd-openvas.pid \
+--log-file /opt/gvm/var/log/gvm/ospd-openvas.log \
+--lock-file-dir /opt/gvm/var/run -u /opt/gvm/var/run/ospd.sock
+
+/etc/systemd/system/openvas.service
+systemctl daemon-reload
+
+sudo -Hiu gvm gvmd --create-scanner="Kifarunix-demo OpenVAS Scanner" --scanner-type="OpenVAS" --scanner-host=/opt/gvm/var/run/ospd.sock
+sudo -Hiu gvm gvmd --get-scanners
+
+sudo -Hiu gvm gvmd --verify-scanner=9c6f2214-eb7c-4613-96bd-21551b259cf
+sudo -Hiu gvm gvmd --create-user gvmadmin
+sudo -Hiu gvm gvmd --create-user gvmadmin --password=StronGP@SS
+ yum install python3
+Use alternatives to make python3 the default:
+alternatives --config python
+There are 2 programs which provide ‘python’.
+Selection Command
+	•	1 /usr/libexec/no-python
+	•	2 /usr/bin/python3 <====== ** make sure to choose this one and hit ENTER **
+Enter to keep the current selection[+], or type selection number: 2
+Enable EPEL Repository:
+AS ROOT: yum install epel-release
+ENABLE Centos-Powertools repository
+AS ROOT: yum config-manager --set-enabled PowerTools
+Install Centos Development tools (includes gcc and a whole bunch of stuff for compiling and building things)
+AS ROOT: yum groupinstall -y “development tools”
+Install required centos packages (most come from Centos-Base, a few come from EPEL and Centos-PowerTools)
+AS ROOT: yum install -y cmake glib2-devel zlib-devel gnutls-devel libuuid-devel libssh-devel libxml2-devel libgcrypt-devel openldap-devel popt-devel redis libical-devel openssl-devel hiredis-devel radcli-devel gpgme-devel libksba-devel doxygen libpcap-devel nodejs python3-polib libmicrohttpd-devel gnutls-utils python3-devel libpq-devel texinfo xmltoman nmap sshpass socat mingw32-gcc ncurses-devel
+(*) It’s probable you can try mingw64-gcc instead of mingw32-gcc, I did not try this.
+Install postgres database server
+AS ROOT: yum install -y postgresql-server postgresql-contrib postgresql-server-devel /usr/bin/postgresql-setup --initdb systemctl enable postgresql systemctl start postgresql
+Configure postgres database (not secure, on to-do list is to configure this with a password…)
+AS ROOT: sudo -Hiu postgres createuser gvm createdb -O gvm gvmd psql gvmd create role dba with superuser noinherit; grant dba to gvm; create extension “uuid-ossp”; create extension “pgcrypto”; \q exit
+systemctl restart postgresql
+Add gvm libraries to systemwide setup:
+AS ROOT: echo “/opt/gvm/lib” > /etc/ld.so.conf.d/gvm.conf ldconfig
+add non-privileged GVM user and create the directory structure where everything will go
+AS ROOT: useradd -r -d /opt/gvm -c “GVM (OpenVAS) User” -s /bin/bash gvm mkdir /opt/gvm mkdir /opt/gvm/src chown -R gvm:gvm /opt/gvm
+add gvm path PATH to /etc/profile
+AS ROOT: vim /etc/profile Add these lines (near bottom just before pathmunge is undefined)
+pathmunge /opt/gvm/bin after pathmunge /opt/gvm/sbin after
+	•	This is my preferred way, you can also edit /etc/environment and include ALL paths there…
+Fetch the gvm packages: (GVM-11 stable as of 5/20/2020)
+AS GVM USER: cd /opt/gvm/src wget -O gvm-libs-11.0.1.tar.gz https://github.com/greenbone/gvm-libs/archive/v11.0.1.tar.gz 65 wget -O openvas-7.0.1.tar.gz https://github.com/greenbone/openvas/archive/v7.0.1.tar.gz 18 wget -O ospd-2.0.1.tar.gz https://github.com/greenbone/ospd/archive/v2.0.1.tar.gz 10 wget -O ospd-openvas-1.0.1.tar.gz https://github.com/greenbone/ospd-openvas/archive/v1.0.1.tar.gz 26 wget -O gvmd-9.0.1.tar.gz https://github.com/greenbone/gvmd/archive/v9.0.1.tar.gz 11 wget -O gsa-9.0.1.tar.gz https://github.com/greenbone/gsa/archive/v9.0.1.tar.gz 11 wget -O openvas-smb-1.0.5.tar.gz https://github.com/greenbone/openvas-smb/archive/v1.0.5.tar.gz 11
+Decompress the source files
+cd /opt/gvm/src find . -name *.gz -exec tar xvfz {} ;
+Now build each package:
+gvm-libs
+AS GVM cd /opt/gvm/src export PKG_CONFIG_PATH=/opt/gvm/lib/pkgconfig cd gvm-libs-11.0.1 mkdir build cd build cmake … -DCMAKE_INSTALL_PREFIX=/opt/gvm make make doc make install
+openvas-smb prerequisite: Heimdal:
+The heimdal-devel package that is available for Centos7/8 from EPEL is NOT pkgconfig-aware (which is annoying), as such it will not work with openvas-smb. Instead, we need to build and install heimdel from source.
+(NOTES: There is an issue with otp support, so it needs to be disabled. For some reason --disable-otp does not work but --enable-otp=no does) (The includedir special location is set up match what the gvm code expects. I believe it’s a debian-specific layout that differs from the usual default)
+AS ROOT cd /usr/local/src wget https://github.com/heimdal/heimdal/releases/download/heimdal-7.7.0/heimdal-7.7.0.tar.gz 17 tar xvfz heimdal-7.7.0.tar.gz cd heimdal-7.7.0 ./configure --enable-otp=no --prefix=/opt/heimdal make <> make install
+openvas-smb code expects the include files in (includedir)/heimdal/… I have not found a way to both build heimdal AND have openvas-smb successfully find the header files, so my solution is a soft link as follows:
+AS ROOT ln -s /opt/heimdal/include /opt/heimdal/include/heimdal
+Add heimdal libraries to systemwide setup:
+AS ROOT echo “/opt/heimdal/lib” > /etc/ld.so.conf.d/heimdal.conf ldconfig
+openvas-smb (Note: PKG_CONFIG_PATH now adds where the heimdal goodies are too)
+AS GVM cd /opt/gvm/src export PKG_CONFIG_PATH=/opt/gvm/lib/pkgconfig:/opt/heimdal/lib/pkgconfig cd openvas-smb-1.0.5 mkdir build cd build/ cmake … -DCMAKE_INSTALL_PREFIX=/opt/gvm make make install
+scanner
+AS GVM Without the following edit, you will encounter this error: …error: ‘pcap_lookupdev’ is deprecated: use ‘pcap_findalldevs’… while compiling openvas.
+Edit the CMakeLists.txt file and replace the line as shown below and rerun the installation;
+vim /opt/gvm/src/openvas-7.0.1/CMakeLists.txt
+Comment out this line and add the line following instead: #set (CMAKE_C_FLAGS_DEBUG “${CMAKE_C_FLAGS_DEBUG} ${COVERAGE_FLAGS}”) set (CMAKE_C_FLAGS_DEBUG “${CMAKE_C_FLAGS_DEBUG} -Werror -Wno-error=deprecated-declarations”)
+cd /opt/gvm/src export PKG_CONFIG_PATH=/opt/gvm/lib/pkgconfig cd openvas-7.0.1 mkdir build cd build cmake … -DCMAKE_INSTALL_PREFIX=/opt/gvm make make doc make install
+Set up redis using the distibuted config file
+AS ROOT: cp /etc/redis.conf /etc/redis.conf.orig cp /opt/gvm/src/openvas-7.0.1/config/redis-openvas.conf /etc/redis.conf chown redis /etc/redis.conf
+EDIT /etc/redis.conf change location of unixsocket to: /tmp/redis.sock
+The two unix socket lines should look like this:
+unixsocket /tmp/redis.sock unixsocketperm 770
+Configure openvas to match how redis under centos works:
+AS GVM echo “db_address = /tmp/redis.sock” > /opt/gvm/etc/openvas/openvas.conf
+AS ROOT systemctl enable redis systemctl start redis
+Disable transparent huge pages:
+AS ROOT:
+cat << EOF > /etc/systemd/system/disable-thp.service [Unit] Description=Disable Transparent Huge Pages (THP)
+[Service] Type=simple ExecStart=/bin/sh -c “echo ‘never’ > /sys/kernel/mm/transparent_hugepage/enabled && echo ‘never’ > /sys/kernel/mm/transparent_hugepage/defrag”
+[Install] WantedBy=multi-user.target EOF
+systemctl daemon-reload systemctl start disable-thp systemctl enable disable-thp
+Add gvm to the redis group (also restart redis)
+AS ROOT: usermod -aG redis gvm systemctl restart redis
+Add these lines to the /etc/sudoers via “visudo” AS ROOT
+Defaults secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin:/opt/gvm/sbin"
+#Allow the user running ospd-openvas, to launch openvas with root permissions gvm ALL = NOPASSWD: /opt/gvm/sbin/openvas gvm ALL = NOPASSWD: /opt/gvm/sbin/gsad
+Add a few more system tuning bits:
+AS ROOT: echo “net.core.somaxconn = 1024” >> /etc/sysctl.conf echo ‘vm.overcommit_memory = 1’ >> /etc/sysctl.conf sysctl -p ldconfig
+Synchronize nvt data
+AS USER GVM (always) greenbone-nvt-sync << refill your cup of coffee >>
+CHECK: find /opt/gvm/var/lib/openvas/plugins | wc -l
+You should see somewhere in the neighborhood of 60,000+ as the file count
+Update the vt info
+AS GVM openvas --update-vt-info
+Let’s continue building:
+gvmd
+The centos default postgres-devel package puts include files in /usr/include, rather than /usr/include/postgresql, the latter which is where the code expects them. We can either hack the code, or just add a soft link, which I prefer as it’s easier:
+AS ROOT: ln -s /usr/include /usr/include/postgresql (code wants “postgresql/libpq-fe.h”)
+AS GVM: For centos, “libpq” is required but is unfortunately not included in the cmake setup. We need to add it: (alternate: I think you can do this with an environment variable too…)
+add -lpq in /opt/gvm/src/gvmd-9.0.1/CMakeLists.txt change this: set (CMAKE_C_FLAGS “${CMAKE_C_FLAGS} -Wall -D_BSD_SOURCE -D_ISOC99_SOURCE -D_SVID_SOURCE -D_DEFAULT_SOURCE -D_FILE_OFFSET_BITS=64”) to this: set (CMAKE_C_FLAGS “${CMAKE_C_FLAGS} -Wall -lpq -D_BSD_SOURCE -D_ISOC99_SOURCE -D_SVID_SOURCE -D_DEFAULT_SOURCE -D_FILE_OFFSET_BITS=64”)
+(Note the complicated cmake below: we have to be very specific to educate cmake where all the postgres goodies are)
+cd /opt/gvm/src export PKG_CONFIG_PATH=/opt/gvm/lib/pkgconfig cd gvmd-9.0.1 mkdir build cd build cmake … -DCMAKE_INSTALL_PREFIX=/opt/gvm/ -DPostgreSQL_TYPE_INCLUDE_DIR=/usr/include/pgsql/server -DPostgreSQL_INCLUDE_DIR=/usr/include/pgsql/server -DPostgreSQL_LIBRARY=/usr/lib64/pgsql make make doc make install
+Install yarn, a prerequisite for building gsa
+AS ROOT npm install -g yarn
+gsa
+AS GVM cd /opt/gvm/src export PKG_CONFIG_PATH=/opt/gvm/lib/pkgconfig cd gsa-9.0.1 mkdir build cd build cmake … -DCMAKE_INSTALL_PREFIX=/opt/gvm make make doc make install
+AS GVM greenbone-scapdata-sync greenbone-certdata-sync gvm-manage-certs -a
+ospd and ospa-openvas are actually python packages. We need to set up our python packages directory:
+AS GVM mkdir -p /opt/gvm/lib/python3.6/site-packages
+Build and Install OSPd and OSPd-OpenVAS
+AS GVM
+cd /opt/gvm/src export PYTHONPATH=/opt/gvm/lib/python3.6/site-packages export PKG_CONFIG_PATH=/opt/gvm/lib/pkgconfig cd ospd-2.0.1 python3 setup.py install --prefix=/opt/gvm
+cd /opt/gvm/src export PYTHONPATH=/opt/gvm/lib/python3.6/site-packages export PKG_CONFIG_PATH=/opt/gvm/lib/pkgconfig cd ospd-openvas-1.0.1 python3 setup.py install --prefix=/opt/gvm
+add install scripts
+AS ROOT
+cat << EOF > /etc/systemd/system/ospd.service [Unit] Description=Job that runs the ospd-openvas daemon Documentation=man:gvm After=postgresql.service
+[Service] Environment=PATH=/opt/gvm/bin/ospd-scanner/bin:/opt/gvm/bin:/opt/gvm/sbin:/opt/gvm/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin Environment=PYTHONPATH=/opt/gvm/lib/python3.6/site-packages Type=simple User=gvm Group=gvm WorkingDirectory=/opt/gvm PIDFile=/opt/gvm/var/run/ospd-openvas.pid ExecStart=/usr/bin/python3 /opt/gvm/bin/ospd-openvas --pid-file /opt/gvm/var/run/ospd-openvas.pid --unix-socket /opt/gvm/var/run/ospd.sock --log-file /opt/gvm/var/log/gvm/ospd-openvas.log --lock-file-dir /opt/gvm/var/run
+[Install] WantedBy=multi-user.target EOF
+cat << EOF > /etc/systemd/system/gvmd.service [Unit] Description=Job that runs the gvm daemon Documentation=man:gvm After=ospd.service
+[Service] Type=forking User=gvm Group=gvm PIDFile=/opt/gvm/var/run/gvmd.pid WorkingDirectory=/opt/gvm ExecStartPre=/bin/sleep 60 ExecStart=/opt/gvm/sbin/gvmd --osp-vt-update=/opt/gvm/var/run/ospd.sock
+[Install] WantedBy=multi-user.target EOF
+cat << EOF > /etc/systemd/system/gsad.service [Unit] Description=Job that runs the gsa daemon Documentation=man:gsa After=postgresql.service
+[Service] Type=forking PIDFile=/opt/gvm/var/run/gsad.pid WorkingDirectory=/opt/gvm ExecStart=/opt/gvm/sbin/gsad --listen=0.0.0.0 [Install] WantedBy=multi-user.target EOF
+Get stuff installed so PDF reports actually work
+AS ROOT yum -y install texlive-collection-fontsrecommended texlive-collection-latexrecommended texlive-changepage texlive-titlesec mkdir -p /usr/share/texlive/texmf-local/tex/latex/comment cd /usr/share/texlive/texmf-local/tex/latex/comment wget http://mirrors.ctan.org/macros/latex/contrib/comment/comment.sty 10 chmod 644 comment.sty texhash
+ADD THESE CRON JOBS AS GVM (change the times to fit your preference)
+0 21 * * * /opt/gvm/bin/greenbone-nvt-sync 0 22 * * * /opt/gvm/sbin/greenbone-certdata-sync 0 23 * * * /opt/gvm/sbin/greenbone-scapdata-sync
+Enable services:
+AS ROOT: systemctl daemon-reload systemctl enable ospd systemctl enable gvmd systemctl enable gsad
+Start Services:
+AS ROOT: systemctl start ospd systemctl start gvmd systemctl start gsad
+check logs: /opt/gvm/var/log/gvm especially gvmd.log, wait until everything has finished updating the first time before proceeding. It will take a few minutes.
+AS GVM: modify the default scanner with the new socket location: (use the UUID that’s actually shown however) THIS IS AN EXAMPLE:
+gvmd --get-scanners 08b69003-5fc2-4037-a479-93b440211c73 OpenVAS /tmp/ospd.sock 0 OpenVAS Default 6acd0832-df90-11e4-b9d5-28d24461215b CVE 0 CVE gvmd --modify-scanner=08b69003-5fc2-4037-a479-93b440211c73 --scanner-host=/opt/gvm/var/run/ospd.sock Scanner modified. gvmd --verify-scanner=08b69003-5fc2-4037-a479-93b440211c73 Scanner version: OpenVAS 7.0.1.
+Create a user for the user interface:
+AS GVM: gvmd --create-user admin gvmd --user=admin --new-password=
+Ready to go: access the UI via: https://node.name.here 26 (you will likely need to open up the server’s firewall…)
+2 Replies
+6
+
+
+		 Install guide for latest GVM version on centos7 or centos8? 23 
+		 Install OpenVAS on CentOS Linux release 8.2.2004 (Core) 13 
+		 GVM 11 from the Source with ansible 7 
+		 Authentication failure for 'vaptadmin' from 192.168.0.85. Status was 2 1 
+		 How to install GVM 11 on Centos 8 
+		1 more
+
+		created 
+		May 21 
+		last reply 
+		Sep 24 
+		91replies 
+		10.8kviews 
+		32users 
+		30likes 
+		22links 
+Frequent Posters
+
+10
+
+9
+
+8
+
+8
+
+7
+
+5
+
+4
+
+4
+
+4
+
+3
+
+3
+
+3
+
+
+
+
+
+
+
+
+
+
+
+
+Popular Links
+65
+https://github.com/greenbone/gvm-libs/archive/v11.0.1.tar.gz
+43
+scanner compilation errors - Pastebin.com pastebin.com
+28
+GitHub - peektwice/gvm-ansible: Build Greenbone Vulnerability Manager from source usi... github.com
+26
+https://github.com/greenbone/ospd-openvas/archive/v1.0.1.tar.gz
+26
+https://node.name.here
+
+There are 91 replies with an estimated read time of 22 minutes.
+Summarize This Topic
+
+awsnaser
+
+
+awsnaser
+May 22
+
+Hi, Very good job , I wonder if it same in Fedora 31 and 32 . May be a bit differ than your manual. Also, It would be better if you build it as RPM Thanks Aws
+
+
+
+
+caseybea
+May 22
+
+Not super familiar with building rpms just yet but I will look into it if I can.
+
+
+
+
+caseybea
+May 23
+
+Sadly, I can’t justify the work time to build RPMS. Maybe if someone is up to it? My primary work task was to get GVM latest- WORKING. Which I did. Regardless, I hope everyone finds my centos-soecific guide useful.
+
+
+
+
+ricamz
+May 23
+
+Hi caseybea.
+Congratulations. I followed your guide and finally after a long time I could install OpenVAS.
+I installed in Oracle Linux 8, and I can say that apart some packages differences, configuring selinux on the redis part and some issues with libraries everything went very well.
+I don’t know why you do cmake … I had to do cmake …
+Well done and thanks for this work.
+Ricardo
+
+
+
+
+ricamz
+May 23
+
+Just a quick question: Do you know how to setup smtp server in OpenVAS?
+1 Reply
+
+
+
+
+caseybea
+May 23
+
+That’s probably in the faq. I haven’t done that yet but when I do I’ll comment back.
+
+
+
+
+caseybea
+May 24
+
+For some reason the web formatting of this forum is adding an extra period to the cmake command. It should be "cmake period period "
+
+
+
+
+bricks
+
+May 24
+
+for formatting commands it is best to use backticks (see inline code 12)
+
+
+
+
+caseybea
+May 26
+
+Hmm. I see no way to edit my original post. Oh well.
+Side note, my default system build has selinux disabled as it’s a decvelopment environment. My fault for not adding that info.
+
+
+
+
+caseybea
+May 26
+
+FYI centos 8 appears to disable email by default. All I had to do to get email alerts working was to enable postfix.
+systemctl enable postfix
+1 Reply
+
+
+
+
+
+SPLIT THIS TOPIC MAY 27
+A post was split to a new topic: Can’t create a scan config (failed to find config)
+
+robinopletal
+2 
+
+
+caseybea
+Jun 1
+
+Hi @caseybea - I have tried to install on CentOS following your guide, but I am getting this following error when making the scanner: https://pastebin.com/5SMgh48s 43 - do you have an idea by which this could be caused?
+Thanks!
+
+
+
+
+tomas_zalesak
+
+
+ricamz
+Jun 1
+
+OpenVAS uses a tool called sendmail. You just need to configure it. There is an example for Ubuntu and Gmail https://kifarunix.com/configure-sendmail-to-use-gmail-relay-on-ubuntu-18-04-debian-10-9/ 18, but you can google it.
+
+
+
+
+bricks
+
+Jun 1
+
+
+
+ tomas_zalesak:
+OpenVAS uses a tool called sendmail.
+Please don’t use the term OpenVAS anymore. You are talking about GVM. See Frequently Asked Questions (FAQ)
+2
+
+
+
+
+ltm
+Jun 1
+
+@caseybea Great job !!! Thanks to your guide, the installation was perfect; I have installed GVM-11 on CentOS 8.1.
+Only two notes:
+	1.	If rsync is not installed, greenbone-nvt-sync (and other sync: scapdata and certdata) return the error: /opt/gvm/bin/greenbone-nvt-sync: line 135: /dev/stderr: Permission denied
+Then … AS ROOT yum install rsync
+	2.	If redis socket (/tmp/redis.sock) have 770 permission, in the openvas.log I have this error: lib kb:CRITICAL:2020-05-28 17h14.58 utc:5568: redis_find: redis connection error to /tmp/redis.sock: Permission denied
+Yes, the gvm user is in the redis group …
+Then, in the /etc/redis.conf, I put this settings: … unixsocket /tmp/redis.sock unixsocketperm 777
+Thanks LTM
+1
+
+
+
+
+Pavel
+1 
+Jun 4
+
+Hello
+I did everything according to the instructions but I have a mistake
+[gvm@localhost ~]$ openvas --update-vt-info openvas: error while loading shared libraries: libopenvas_nasl.so.11: cannot open shared object file: No such file or directory
+What is the problem?
+[root@localhost ~]# find / -name libopenvas_nasl.so.11 /opt/gvm/src/openvas-7.0.1/build/nasl/libopenvas_nasl.so.11 /opt/gvm/lib/libopenvas_nasl.so.11
+2 Replies
+
+
+
+
+bricks
+
+Jun 4
+
+
+
+ caseybea:
+Add gvm libraries to systemwide setup:
+AS ROOT: echo “/opt/gvm/lib” > /etc/ld.so.conf.d/gvm.conf ldconfig
+Should fix the issue.
+Don’t take that as an offense but if you don’t know how to fix this issue you should very likely not build something from source by yourself. You need to know how shared binary objects (aka. dynamic libraries) are loaded at runtime and how the toolchain around it works.
+2
+
+
+
+
+Pavel
+Jun 4
+
+Thanks helped. I entered the quotation marks incorrectly
+
+
+
+
+dimante
+Jun 5
+
+Hmm running into problems when following the script when getting to the openvas build make erroring with the following:
+cc: error: .-g: No such file or directory cc: fatal error: no input files compilation terminated.
+Not sure what I could be doing wrong. Has the source somehow changed?
+1 Reply

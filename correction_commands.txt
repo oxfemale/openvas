@@ -1,4 +1,6 @@
 
+ https://pentestit.de/gvm-20-08-auf-ubuntu-server-20-04-installieren/
+ 
  gvmd --create-scanner="OSP Scanner" --scanner-host=127.0.0.1 --scanner-port=1234 \
       --scanner-type="OSP" --scanner-ca-pub=/opt/gvm/var/lib/gvm/CA/cacert.pem \
       --scanner-key-pub=/opt/gvm/var/lib/gvm/CA/clientcert.pem \
